@@ -10,7 +10,7 @@ const io = socket.listen(server);
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
-app.use('/assets',express.static(__dirname + '/assets'));
+app.use('/assets',express.static(__dirname + '/client/assets'));
 app.use('/client',express.static(__dirname + '/client'));
 app.use('/lib',express.static(__dirname + '/lib'));
 

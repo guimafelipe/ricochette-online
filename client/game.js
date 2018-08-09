@@ -19,6 +19,14 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-function preload(){}
-function create(){}
+function preload(){
+    this.load.image('bullet', 'client/assets/art/redbullet.png');
+}
+function create(){
+    let bullet = this.physics.add.sprite(100,450,'bullet');
+    bullet.setBounce(1);
+    bullet.setCollideWorldBounds(true);
+    bullet.setVelocity(100, 100);
+
+}
 function update(){}
