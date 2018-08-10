@@ -5,6 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "build": "webpack",
     "start": "node server.js"
   },
   "repository": {
@@ -19,7 +21,12 @@
   "homepage": "https://github.com/guimafelipe/ricochette-online#readme",
   "dependencies": {
     "express": "^4.16.3",
+    "file-loader": "^1.1.11",
     "phaser": "^3.11.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "webpack": "^4.16.5"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.1.0"
   }
 }

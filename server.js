@@ -10,12 +10,13 @@ const io = socket.listen(server);
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
-app.use('/assets',express.static(__dirname + '/client/assets'));
-app.use('/client',express.static(__dirname + '/client'));
+app.use('/assets',express.static(__dirname + '/dist/assets'));
+// app.use('/dist',express.static(__dirname + '/dist'));
 app.use('/lib',express.static(__dirname + '/lib'));
+app.use('/',express.static(__dirname + '/dist'));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/client/index.html');
+    res.sendFile(__dirname + '/dist/index.html');
 });
 
 server.listen(port, () => {
