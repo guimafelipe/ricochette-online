@@ -1,18 +1,27 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
 	entry: './src/main.js',
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		  filename: 'build.js',
+		filename: 'build.js',
 	},
 	devtool: 'inline-source-map',
-	module: {
-		rules: [{
-			test: /\.(png|svg|jpg|gif)$/,
-	  		use: [
-	 			 'file-loader'
-	  		]
-	   	}]
-	}
+
+    module: {
+        rules: [
+          {
+            test: [ /\.vert$/, /\.frag$/ ],
+            use: 'raw-loader'
+          }
+        ]
+    },
+
+    plugins: [
+        new webpack.DefinePlugin({
+            'CANVAS_RENDERER': JSON.stringify(true),
+            'WEBGL_RENDERER': JSON.stringify(true)
+        })
+    ]
 }
