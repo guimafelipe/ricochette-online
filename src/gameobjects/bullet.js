@@ -1,10 +1,11 @@
 export default class Bullet extends Phaser.GameObjects.Image{
-    constructor(scene, position, direction, bulletImg){
+    constructor(scene, x, y, dx, dy, bulletImg){
         super(scene, 0, 0, bulletImg)
-        this.setInitialPosition(position)
-        this.setInitialDirection(direction)
+        this.setInitialPosition({x ,y})
+        this.setInitialDirection({x: dx, y: dy})
         // Phaser.GameObjects.Sprite.call(this, scene, position.x, position.y, bulletImg)
         // Phaser.GameObjects.Image.call()
+        this.setScale(0.5)
         this.setActive(true)
     }
 
@@ -14,10 +15,10 @@ export default class Bullet extends Phaser.GameObjects.Image{
     }
 
     setInitialDirection(direction){
-        this.velocity = new Phaser.Math.Vector2(direction.x - this.x, direction.y - this.y)
+        this.velocity = new Phaser.Math.Vector2(direction.x, direction.y)
         this.velocity.normalize()
-        this.speed = 15
-        this.velocity.scale(15)
+        this.speed = 7
+        this.velocity.scale(this.speed)
     }
 
     goDown(){
