@@ -5,8 +5,8 @@ import Loading from "./scenes/loading.js";
 const config = {
     type: Phaser.AUTO,
     parent: 'game',
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     physics: {
         default: 'arcade',
         arcade: {
@@ -14,6 +14,7 @@ const config = {
             gravity: { y: 200 }
         }
     },
+    backgroundColor: 0xffffff,
     scene: [Game, Loading, Lobby]
 };
 

@@ -7,18 +7,22 @@ class Game extends Phaser.Scene {
     }
 
     preload(){
-        this.load.image('BlueBullet', "assets/art/bluebullet.png");
-        this.load.image('RedBullet', "assets/art/redbullet.png");
-        this.load.image('BluePaddle', "assets/art/bluepaddle.png");
+        this.load.image('BlueBullet', "assets/art/bluebullet.png")
+        this.load.image('RedBullet', "assets/art/redbullet.png")
+        this.load.image('BluePaddle', "assets/art/bluepaddle.png")
+        this.load.image('RedPaddle', "assets/art/redpaddle.png")
+        this.load.image('Arena', "assets/art/fundo.png")
     }
 
     create(){
-        this.image = this.add.image(400, 300, "BlueBullet");
-        this.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.input.on('pointerdown', (event) =>{
-            // this.image.x = event.x;
-            // this.image.y = event.y; 
-        })
+        // this.image = this.add.image(400, 300, "BlueBullet");
+        // this.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        // this.input.on('pointerdown', (event) =>{
+        //     // this.image.x = event.x;
+        //     // this.image.y = event.y; 
+        // })
+
+        this.arena = this.add.image(2,0, "Arena").setOrigin(0).setScale(0.6)
 
         this.bulletGroup = new Phaser.GameObjects.Group(this)
         this.paddleGroup = new Phaser.GameObjects.Group(this)
