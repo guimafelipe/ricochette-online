@@ -1,5 +1,6 @@
 import Game from "./scenes/game.js";
 import Lobby from "./scenes/lobby.js";
+import Loading from "./scenes/loading.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -13,11 +14,7 @@ const config = {
             gravity: { y: 200 }
         }
     },
-    scene: [Game, Lobby]
-        // preload: preload,
-        // create: create,
-        // update: update
-    // }
+    scene: [Game, Loading, Lobby]
 };
 
 const game = new Phaser.Game(config);
