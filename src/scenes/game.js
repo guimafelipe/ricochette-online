@@ -11,42 +11,69 @@ class Game extends Phaser.Scene {
         this.load.image('RedBullet', "assets/art/redbullet.png")
         this.load.image('BluePaddle', "assets/art/bluepaddle.png")
         this.load.image('RedPaddle', "assets/art/redpaddle.png")
-        this.load.image('Arena', "assets/art/fundo.png")
+    }
+
+    constructArena(){
+        let grossura = 15;
+        let altura = 600;
+        let comprimento = 1000;
+        let wall
+        wall = new Phaser.GameObjects.Graphics(this);
+        wall.fillStyle(0x000000)
+        wall.fillRect(0,0,grossura, altura)
+        wall.generateTexture('wall1', grossura, altura)
+        wall = this.add.image(0,0,'wall1')
+        wall.setOrigin(0,0)
+        this.areaBounds.add(wall,true)
+        wall = new Phaser.GameObjects.Graphics(this);
+        wall.fillStyle(0x000000)
+        wall.fillRect(0,0,comprimento, grossura)
+        wall.generateTexture('wall2', comprimento, grossura)
+        wall = this.add.image(0,0,'wall2')
+        wall.setOrigin(0,0)
+        this.areaBounds.add(wall ,true)
+        wall = new Phaser.GameObjects.Graphics(this);
+        wall.fillStyle(0x000000)
+        wall.fillRect(0,0,comprimento, grossura)
+        wall.generateTexture('wall3', comprimento, grossura)
+        wall = this.add.image(0,altura-grossura,'wall3')
+        wall.setOrigin(0,0)
+        this.areaBounds.add(wall ,true)
+        wall = new Phaser.GameObjects.Graphics(this);
+        wall.fillStyle(0x000000)
+        wall.fillRect(0,0,grossura, altura)
+        wall.generateTexture('wall4', grossura, altura)
+        wall = this.add.image(comprimento-grossura,0,'wall4')
+        wall.setOrigin(0,0)
+        this.areaBounds.add(wall ,true)
+
     }
 
     create(){
-        // this.image = this.add.image(400, 300, "BlueBullet");
-        // this.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        // this.input.on('pointerdown', (event) =>{
-        //     // this.image.x = event.x;
-        //     // this.image.y = event.y; 
-        // })
+        this.areaBounds = this.add.group()
+        this.constructArena()
 
-        this.arena = this.add.image(2,0, "Arena").setOrigin(0).setScale(0.6)
-
-        this.bulletGroup = new Phaser.GameObjects.Group(this)
-        this.paddleGroup = new Phaser.GameObjects.Group(this)
+        this.bulletGroup = this.add.group()
+        this.paddleGroup = this.add.group()
         this.paddleGroup.runChildUpdate = true
         this.bulletGroup.runChildUpdate = true
 
+        this.areaBounds.children.iterate(kid => {
+            this.physics.world.enable(kid, Phaser.Physics.Arcade.STATIC_BODY)
+        })
+
         let paddle = new Paddle(this, 400, 300, "BluePaddle")
         this.paddleGroup.add(paddle, true)
-
-        this.input.keyboard.on('keyup_P', event => {
-            // let blueBullet = new Bullet(this, {x: this.image.x, y: this.image.y}, {x: this.input.x, y: this.input.y}, 'RedBullet')
-            // this.bulletGroup.add(blueBullet, true)
-        })
-
-        this.input.keyboard.on('keyup', e => {
-            if(e.key == '2'){
-                this.scene.start("Lobby")
-            }
-        })
+        // this.physics.world.enable(this.areaBounds, Phaser.Physics.Arcade.STATIC_BODY)
+        this.physics.world.enable(this.bulletGroup)
+        this.physics.world.enable(this.paddleGroup)
+        // this.physics.collide(this.bulletGroup, this.areaBounds)
+        // this.physics.collide(this.paddleGroup, this.areaBounds)
+        this.physics.add.collider(this.paddleGroup, this.areaBounds)
+        this.physics.add.collider(this.bulletGroup, this.areaBounds)
     }
 
     update(delta){
-        // if(this.key_A.isDown)
-        //     this.image.x--;
         this.bulletGroup.preUpdate(this.time, delta)
         this.paddleGroup.preUpdate(this.time, delta)
     }

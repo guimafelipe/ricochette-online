@@ -8,11 +8,12 @@ export default class Paddle extends Phaser.GameObjects.Image{
         this.left_act = this.scene.input.keyboard.addKey("A")
         this.right_act = this.scene.input.keyboard.addKey("D")
         this.direction = new Phaser.Math.Vector2()
-        this.speed = 5
+        this.speed = 200
         this.max_bullets = 10
         this.curr_bullets = this.max_bullets
         this.scene.input.on("pointerdown", e => this.shoot(e.x, e.y))
         this.color = "red"
+        this.body = new Phaser.Physics.Arcade.Body(this.scene.physics.world, this)
         this.setScale(0.4)
         this.setActive(true)
     }
@@ -25,8 +26,8 @@ export default class Paddle extends Phaser.GameObjects.Image{
         if(this.right_act.isDown) this.direction.x += 1
         this.direction.normalize()
         this.direction.scale(this.speed)
-        this.x += this.direction.x
-        this.y += this.direction.y 
+        this.body.setVelocityX(this.direction.x)
+        this.body.setVelocityY(this.direction.y)
         this.adjustRotation()
     }
 
