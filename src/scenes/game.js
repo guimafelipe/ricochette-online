@@ -1,4 +1,3 @@
-import Bullet from "../gameobjects/bullet.js"
 import Paddle from "../gameobjects/paddle"
 
 class Game extends Phaser.Scene {
@@ -47,6 +46,10 @@ class Game extends Phaser.Scene {
 
     }
 
+    end_game(loser_paddle){
+        console.log("Game Over")
+    }
+
     create(){
         this.areaBounds = this.add.group()
         this.constructArena()
@@ -62,18 +65,38 @@ class Game extends Phaser.Scene {
 
         let paddle = new Paddle(this, 400, 300, "paddle")
         this.paddleGroup.add(paddle, true)
-        // this.physics.world.enable(this.areaBounds, Phaser.Physics.Arcade.STATIC_BODY)
         this.physics.world.enable(this.bulletGroup)
         this.physics.world.enable(this.paddleGroup)
-        // this.physics.collide(this.bulletGroup, this.areaBounds)
-        // this.physics.collide(this.paddleGroup, this.areaBounds)
         this.physics.add.collider(this.paddleGroup, this.areaBounds)
         this.physics.add.collider(this.bulletGroup, this.areaBounds)
+
+        this.countdown = 3000
+        this.game_state = "countdown" // {countdown, running, ended}
     }
 
-    update(delta){
-        this.bulletGroup.preUpdate(this.time, delta)
-        this.paddleGroup.preUpdate(this.time, delta)
+    start_game(){
+        this.paddleGroup.children.iterate(paddle => paddle.can_move = true)
+        this.game_state = 'running'
+        console.log('começou')
+    }
+
+    end_game(){
+        this.paddleGroup.children.iterate(paddle => paddle.can_move = false)
+        console.log("Game Over")
+    }
+
+    update(time, delta){
+        if(this.game_state == 'countdown')
+            if(this.countdown > 0){
+                this.countdown -= delta
+                return
+            } else this.start_game()
+        else if(this.game_state == 'running'){
+            this.bulletGroup.preUpdate(this.time, delta)
+            this.paddleGroup.preUpdate(this.time, delta)
+        } else if(this.game_state == 'ended') {
+            
+        }
     }
 }
 

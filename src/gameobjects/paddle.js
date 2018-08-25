@@ -16,7 +16,9 @@ export default class Paddle extends Phaser.GameObjects.Image{
         this.max_bullets = 10
         this.curr_bullets = this.max_bullets
         this.lifes = 10
-        this.reload_cd = 2 // 2 segundos de cooldown
+        this.reload_cd = 2000 // 2 segundos de cooldown
+        this.reload_time = this.scene.time.now
+        this.can_move = false
 
         // Adding physics related stuff
         this.scene.input.on("pointerdown", e => this.shoot(e.x, e.y))
@@ -30,6 +32,11 @@ export default class Paddle extends Phaser.GameObjects.Image{
     }
 
     update(){
+        if(!this.can_move){
+            this.body.setVelocityX(0)
+            this.body.setVelocityY(0)
+            return
+        } 
         this.direction = new Phaser.Math.Vector2(0,0)
         if(this.up_act.isDown) this.direction.y -= 1
         if(this.down_act.isDown) this.direction.y += 1
@@ -40,6 +47,8 @@ export default class Paddle extends Phaser.GameObjects.Image{
         this.body.setVelocityX(this.direction.x)
         this.body.setVelocityY(this.direction.y)
         this.adjustRotation()
+
+        this.reload()
     }
 
     adjustRotation(){
@@ -49,6 +58,7 @@ export default class Paddle extends Phaser.GameObjects.Image{
     }
 
     shoot(x,y){
+        if(!this.can_move) return
         if(this.curr_bullets <= 0) return
         let shot_direction = new Phaser.Math.Vector2(x - this.x, y - this.y)
         shot_direction.normalize()
@@ -60,16 +70,20 @@ export default class Paddle extends Phaser.GameObjects.Image{
     }
 
     takeDamage(){
-        if(!this.alive) return
+        if(!this.can_move) return
         this.lifes--
         if (this.lifes === 0) {
             console.log("Eu morri")
+            this.can_move = false
         }
     }
 
     reload(){
-        if(this.curr_bullets == this.max_bullets) return
-        this.curr_bullets++
+        if(!this.can_move) return
+        if(this.curr_bullets < this.max_bullets && this.scene.time.now > this.reload_time){
+            this.curr_bullets++
+            this.reload_time = this.scene.time.now + this.reload_cd
+        }
     }
 
 
