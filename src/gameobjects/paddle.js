@@ -12,8 +12,10 @@ export default class Paddle extends Phaser.GameObjects.Image{
         this.max_bullets = 10
         this.curr_bullets = this.max_bullets
         this.scene.input.on("pointerdown", e => this.shoot(e.x, e.y))
-        this.color = "red"
+        this.color = "red" //change after
+        this.setOrigin(0.7, 0.5)
         this.body = new Phaser.Physics.Arcade.Body(this.scene.physics.world, this)
+        this.body.setCircle(this.height*0.3, this.width*0.4, this.height*0.2)
         this.setScale(0.4)
         this.setActive(true)
     }
@@ -41,11 +43,15 @@ export default class Paddle extends Phaser.GameObjects.Image{
         if(this.curr_bullets <= 0) return
         let shot_direction = new Phaser.Math.Vector2(x - this.x, y - this.y)
         shot_direction.normalize()
-        let safe_dist = 14
+        let safe_dist = 34
         let spawn_position = new Phaser.Math.Vector2(this.x + shot_direction.x*safe_dist, this.y + shot_direction.y*safe_dist)
         let new_bullet = new Bullet(this.scene, spawn_position.x, spawn_position.y, shot_direction.x, shot_direction.y, "BlueBullet")
         this.scene.bulletGroup.add(new_bullet, true)
         this.curr_bullets--
+    }
+
+    takeDamage(){
+        console.log("ai")
     }
 
     reload(){

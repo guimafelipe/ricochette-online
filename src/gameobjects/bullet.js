@@ -3,7 +3,6 @@ export default class Bullet extends Phaser.GameObjects.Image{
         super(scene, 0, 0, bulletImg)
         this.setInitialPosition({x ,y})
         this.scene.physics.world.enable(this)
-        this.scene.physics.collide(this, this.scene.areaBounds)
         this.body.setBounce(1)
         this.body.setCircle(this.width/2)
         this.setActive(true)
@@ -23,6 +22,15 @@ export default class Bullet extends Phaser.GameObjects.Image{
         this.velocity.scale(this.speed)
         this.body.setVelocityX(this.velocity.x)
         this.body.setVelocityY(this.velocity.y)
+    }
+
+    onCollision(self, paddle){
+        paddle.takeDamage()
+        self.destroy()
+    }
+
+    update(){
+        this.scene.physics.overlap(this, this.scene.paddleGroup, this.onCollision)
     }
 
 }
