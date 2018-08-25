@@ -7,10 +7,8 @@ class Game extends Phaser.Scene {
     }
 
     preload(){
-        this.load.image('BlueBullet', "assets/art/bluebullet.png")
-        this.load.image('RedBullet', "assets/art/redbullet.png")
-        this.load.image('BluePaddle', "assets/art/bluepaddle.png")
-        this.load.image('RedPaddle', "assets/art/redpaddle.png")
+        this.load.image('bullet', "assets/art/ball.png")
+        this.load.image('paddle', "assets/art/paddle.png")
     }
 
     constructArena(){
@@ -62,7 +60,7 @@ class Game extends Phaser.Scene {
             this.physics.world.enable(kid, Phaser.Physics.Arcade.STATIC_BODY)
         })
 
-        let paddle = new Paddle(this, 400, 300, "BluePaddle")
+        let paddle = new Paddle(this, 400, 300, "paddle")
         this.paddleGroup.add(paddle, true)
         // this.physics.world.enable(this.areaBounds, Phaser.Physics.Arcade.STATIC_BODY)
         this.physics.world.enable(this.bulletGroup)

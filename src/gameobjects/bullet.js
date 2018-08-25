@@ -7,6 +7,7 @@ export default class Bullet extends Phaser.GameObjects.Image{
         this.body.setCircle(this.width/2)
         this.setActive(true)
         this.setScale(0.5)
+        this.tint = 0xff0000
         this.setInitialDirection({x: dx, y: dy})
     }
 
