@@ -5,6 +5,7 @@ export default class Bullet extends Phaser.GameObjects.Image{
         this.scene.physics.world.enable(this)
         this.scene.physics.collide(this, this.scene.areaBounds)
         this.body.setBounce(1)
+        this.body.setCircle(this.width/2)
         this.setActive(true)
         this.setScale(0.5)
         this.setInitialDirection({x: dx, y: dy})
