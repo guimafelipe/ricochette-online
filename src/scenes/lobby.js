@@ -5,14 +5,21 @@ export default class Lobby extends Phaser.Scene {
         super({key: "Lobby"});
     }
     
-    updateButtons(){
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas", 1));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas53", 12));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas4", 11));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas3", 13));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas22", 14));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas2", 15));
-        this.buttons.add(new LobbyButton(this, 0, 0, "Douglas1", 16));
+    updateButtons(queueUsers){
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas", 1));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas53", 12));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas4", 11));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas3", 13));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas22", 14));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas2", 15));
+        // this.buttons.add(new LobbyButton(this, 0, 0, "Douglas1", 16));
+
+        this.buttons.removeAll(true);
+
+        for(let id in queueUsers){
+            this.buttons.add(new LobbyButton(this, 0, 0, queueUsers[id], id));
+        }
+
         let i = 0, j = 0
         let snapv = 30, snaph = 150
         let maxLines = 5
@@ -26,8 +33,20 @@ export default class Lobby extends Phaser.Scene {
         })
     }
 
+    setupSocket(){
+        this.socket.on("lobbyUpdated", queueUsers => {
+            this.updateButtons(queueUsers);
+        })
+    }
+
+    init(data){
+        this.socket = data.socket;
+    }
+
     create(){
         this.text = this.add.text(0,0,"Lobby:", {font:"40px sans-serif", fill:"#000000"});
+
+        setupSocket();
 
         this.buttons = this.add.container(20, 100)
         this.updateButtons()
