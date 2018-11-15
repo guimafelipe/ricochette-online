@@ -11,6 +11,6 @@ export default class LobbyButton extends Phaser.GameObjects.Text {
         this.on('pointerover', () => this.tint = this.hover_tint)
         this.on('pointerout', () => this.tint = this.normal_tint)
         this.on('pointerdown', () => this.tint = this.selected_tint)
-        this.on('pointerup', () => this.action())
+        this.on('pointerup', () => this.scene.startMatchHandle(socket_id))
     }
 }

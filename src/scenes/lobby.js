@@ -37,11 +37,13 @@ export default class Lobby extends Phaser.Scene {
         });
 
         if(!imInQueue){
-            this.queueButton.updateText('Enter')
+            this.queueButton.text = 'Enter'
+            this.queueButton.updateText()
             this.queueButton.action = this.enterQueueHandle;
             console.log('enter')
         } else {
-            this.queueButton.updateText('Exit')
+            this.queueButton.text = 'Exit'
+            this.queueButton.updateText()
             console.log('exit')
             this.queueButton.action = this.exitQueueHandle;
         }
@@ -51,6 +53,8 @@ export default class Lobby extends Phaser.Scene {
         this.socket.on("lobbyUpdated", queueUsers => {
             this.updateButtons(queueUsers);
         });
+
+        this.socket.on("enterMatch", () => this.goToMatch());
     }
 
     enterQueueHandle(){
@@ -65,11 +69,21 @@ export default class Lobby extends Phaser.Scene {
         this.socket.emit('setName', name);
     }
 
+    startMatchHandle(oponentId){
+        this.socket.emit('startMatch', oponentId);
+    }
+
+    goToMatch(){
+        this.scene.start('Game');
+    }
+
     init(data){
         this.socket = data.socket;
         this.enterQueueHandle = this.enterQueueHandle.bind(this)
         this.exitQueueHandle = this.exitQueueHandle.bind(this)
         this.changeNameHandle = this.changeNameHandle.bind(this)
+        this.startMatchHandle = this.startMatchHandle.bind(this)
+        this.goToMatch = this.goToMatch.bind(this)
     }
 
     create(){
@@ -80,7 +94,8 @@ export default class Lobby extends Phaser.Scene {
         this.buttons = this.add.container(20, 100)
         this.queueButton = new MenuButton(this, 180, 180)
         this.add.existing(this.queueButton)
-        this.updateButtons()
+
+        this.socket.emit('enterLobby');
 
         this.key_1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
     }
