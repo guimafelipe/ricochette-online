@@ -54,7 +54,7 @@ export default class Lobby extends Phaser.Scene {
             this.updateButtons(queueUsers);
         });
 
-        this.socket.on("enterMatch", () => this.goToMatch());
+        this.socket.on("enterMatch", data => this.goToMatch(data.isMaster));
     }
 
     enterQueueHandle(){
@@ -73,8 +73,8 @@ export default class Lobby extends Phaser.Scene {
         this.socket.emit('startMatch', oponentId);
     }
 
-    goToMatch(){
-        this.scene.start('Game');
+    goToMatch(isMaster){
+        this.scene.start('Game', {socket: this.socket, isMaster: isMaster});
     }
 
     init(data){

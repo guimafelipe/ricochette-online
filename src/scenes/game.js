@@ -1,4 +1,5 @@
 import Paddle from "../gameobjects/paddle"
+import Bullet from "../gameobjects/bullet"
 
 class Game extends Phaser.Scene {
     constructor(){
@@ -50,6 +51,42 @@ class Game extends Phaser.Scene {
         console.log("Game Over")
     }
 
+    // Politically correct Slave
+    sync_game(data){
+        let bullets = data.bullets
+        let paddle_player = data.paddle2
+        let paddle_enemy = data.paddle1
+
+        this.bulletGroup.clear(true, true) // better add a pool of objects
+        bullets.forEach(bullet => {
+            let newBullet = new Bullet(this, bullet.x, bullet.y, bullet.dx, bullet.dy, bullet.bulletImg);
+            this.bulletGroup.add(newBullet, true);
+        });
+    }
+
+    // Master
+    get_inputs(input){
+        let enemy_mouse_pos = input.mouse_pos;
+        let ver_dir = input.ver_dir; // -1, 0 ou 1
+        let hor_dir = input.hor_dir;
+    }
+
+    commit_game(){ //construct data object
+
+    }
+
+    setupSocket(){
+        this.socket.on('sync_game', data => this.sync_game(data));
+        this.socket.on('get_inputs', input => this.get_inputs(input));
+    }
+
+    init(data){
+        this.isMaster = data.isMaster; // true or false
+        this.socket = data.socket;
+        console.log(this.isMaster);
+        this.setupSocket();
+    }
+
     create(){
         this.areaBounds = this.add.group()
         this.constructArena()
@@ -64,7 +101,9 @@ class Game extends Phaser.Scene {
         })
 
         let paddle = new Paddle(this, 400, 300, "paddle")
+        let paddle_enemy = new Paddle(this, 200, 100, "paddle")
         this.paddleGroup.add(paddle, true)
+        this.paddleGroup.add(paddle_enemy, true)
         this.physics.world.enable(this.bulletGroup)
         this.physics.world.enable(this.paddleGroup)
         this.physics.add.collider(this.paddleGroup, this.areaBounds)
