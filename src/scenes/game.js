@@ -53,13 +53,21 @@ class Game extends Phaser.Scene {
 
     // Politically correct Slave
     sync_game(data){
+        if(this.isMaster) return;
+
         let bullets = data.bullets
         let paddle_player = data.paddle2
         let paddle_enemy = data.paddle1
 
+        this.myPaddle.setPosition(paddle_player.x, paddle_player.y);
+        this.myPaddle.setRotation(paddle_player.angle);
+
+        this.enemyPaddle.setPosition(paddle_enemy.x, paddle_enemy.y);
+        this.enemyPaddle.setRotation(paddle_enemy.angle);
+
         this.bulletGroup.clear(true, true) // better add a pool of objects
         bullets.forEach(bullet => {
-            let newBullet = new Bullet(this, bullet.x, bullet.y, bullet.dx, bullet.dy, bullet.bulletImg);
+            let newBullet = new Bullet(this, bullet.x, bullet.y, bullet.dx, bullet.dy, 'bullet');
             this.bulletGroup.add(newBullet, true);
         });
     }
@@ -72,7 +80,34 @@ class Game extends Phaser.Scene {
     }
 
     commit_game(){ //construct data object
+        let data = {};
 
+        data.paddle1 = {
+            x: this.myPaddle.body.x,
+            y: this.myPaddle.body.y,
+            angle: this.myPaddle.rotation, //radians
+        }
+        
+        data.paddle2 = {
+            x: this.enemyPaddle.body.x,
+            y: this.enemyPaddle.body.y,
+            angle: this.enemyPaddle.rotation,
+        }
+
+        data.bullets = [];
+
+        let gameBullets = this.bulletGroup.getChildren();
+
+        gameBullets.forEach(bullet => {
+            let bData = {};
+            bData.tint = bullet.tint;
+            bData.x = bullet.body.x;
+            bData.y = bullet.body.y;            
+            bData.velocity = bullet.body.velocity;
+            data.bullets.push(bData);
+        });
+
+        this.socket.emit('commit_game', data);
     }
 
     setupSocket(){
@@ -102,8 +137,17 @@ class Game extends Phaser.Scene {
 
         let paddle = new Paddle(this, 400, 300, "paddle")
         let paddle_enemy = new Paddle(this, 200, 100, "paddle")
-        this.paddleGroup.add(paddle, true)
-        this.paddleGroup.add(paddle_enemy, true)
+
+        if(this.isMaster){
+            this.myPaddle = paddle;
+            this.enemyPaddle = paddle_enemy;
+        } else {
+            this.myPaddle = paddle_enemy;
+            this.enemyPaddle = paddle;
+        }
+        this.paddleGroup.add(this.myPaddle, true)
+        this.paddleGroup.add(this.enemyPaddle, true)
+
         this.physics.world.enable(this.bulletGroup)
         this.physics.world.enable(this.paddleGroup)
         this.physics.add.collider(this.paddleGroup, this.areaBounds)
@@ -114,7 +158,8 @@ class Game extends Phaser.Scene {
     }
 
     start_game(){
-        this.paddleGroup.children.iterate(paddle => paddle.can_move = true)
+        this.myPaddle.can_move = true;
+        // this.paddleGroup.children.iterate(paddle => paddle.can_move = true)
         this.game_state = 'running'
         console.log('começou')
     }
@@ -125,7 +170,7 @@ class Game extends Phaser.Scene {
     }
 
     update(time, delta){
-        if(this.game_state == 'countdown')
+        if(this.game_state == 'countdown') //mover isso pro server
             if(this.countdown > 0){
                 this.countdown -= delta
                 return
@@ -133,6 +178,9 @@ class Game extends Phaser.Scene {
         else if(this.game_state == 'running'){
             this.bulletGroup.preUpdate(this.time, delta)
             this.paddleGroup.preUpdate(this.time, delta)
+            if(this.isMaster){
+                this.commit_game();
+            }
         } else if(this.game_state == 'ended') {
             
         }

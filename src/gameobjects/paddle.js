@@ -54,7 +54,7 @@ export default class Paddle extends Phaser.GameObjects.Image{
     adjustRotation(){
         let target = this.scene.input.mousePointer.position
         let angle = Math.atan2((target.y - this.y), (target.x-this.x))
-        this.setRotation(angle)
+        this.setRotation(angle) //radians
     }
 
     shoot(x,y){
